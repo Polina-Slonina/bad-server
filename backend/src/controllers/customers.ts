@@ -3,6 +3,9 @@ import { FilterQuery } from 'mongoose'
 import NotFoundError from '../errors/not-found-error'
 import Order from '../models/order'
 import User, { IUser } from '../models/user'
+import BadRequestError from '../errors/bad-request-error'
+import escapeRegExp from '../utils/escapeRegExp'
+import { getDateQueryParam, getNumberQueryParam, getStringQueryParam } from '../utils/query-params'
 
 // TODO: Добавить guard admin
 // eslint-disable-next-line max-len
@@ -14,19 +17,19 @@ export const getCustomers = async (
 ) => {
     try {
         const {
-            page = 1,
-            limit = 10,
-            sortField = 'createdAt',
-            sortOrder = 'desc',
-            registrationDateFrom,
-            registrationDateTo,
-            lastOrderDateFrom,
-            lastOrderDateTo,
-            totalAmountFrom,
-            totalAmountTo,
-            orderCountFrom,
-            orderCountTo,
-            search,
+            page = getNumberQueryParam(req.query.page) || 1,
+            limit = getNumberQueryParam(req.query.limit) || 10,
+            sortField = getStringQueryParam(req.query.sortField) || 'createdAt',
+            sortOrder = getStringQueryParam(req.query.sortOrder) || 'desc',
+            registrationDateFrom = getDateQueryParam(req.query.registrationDateFrom),
+            registrationDateTo = getDateQueryParam(req.query.registrationDateTo),
+            lastOrderDateFrom = getDateQueryParam(req.query.lastOrderDateFrom),
+            lastOrderDateTo = getDateQueryParam(req.query.lastOrderDateTo),
+            totalAmountFrom = getNumberQueryParam(req.query.totalAmountFrom),
+            totalAmountTo = getNumberQueryParam(req.query.totalAmountTo),
+            orderCountFrom = getNumberQueryParam(req.query.orderCountFrom),
+            orderCountTo = getNumberQueryParam(req.query.orderCountTo),
+            search = getStringQueryParam(req.query.search),
         } = req.query
 
         const filters: FilterQuery<Partial<IUser>> = {}
@@ -92,7 +95,7 @@ export const getCustomers = async (
         }
 
         if (search) {
-            const searchRegex = new RegExp(search as string, 'i')
+            const searchRegex = new RegExp(escapeRegExp(search as string), 'i')
             const orders = await Order.find(
                 {
                     $or: [{ deliveryAddress: searchRegex }],
@@ -140,7 +143,7 @@ export const getCustomers = async (
         const totalPages = Math.ceil(totalUsers / Number(limit))
 
         res.status(200).json({
-            customers: users,
+            customers: users,   
             pagination: {
                 totalUsers,
                 totalPages,
@@ -161,10 +164,21 @@ export const getCustomerById = async (
     next: NextFunction
 ) => {
     try {
-        const user = await User.findById(req.params.id).populate([
+        // Проверяем ID
+        const userId = req.params.id
+        if (!userId.match(/^[0-9a-fA-F]{24}$/)) {
+            return next(new BadRequestError('Невалидный ID пользователя'))
+        }
+
+        const user = await User.findById(userId).populate([
             'orders',
             'lastOrder',
         ])
+
+        if (!user) {
+            return next(new NotFoundError('Пользователь не найден'))
+        }
+
         res.status(200).json(user)
     } catch (error) {
         next(error)
@@ -179,8 +193,14 @@ export const updateCustomer = async (
     next: NextFunction
 ) => {
     try {
+        // Проверяем ID
+        const userId = req.params.id
+        if (!userId.match(/^[0-9a-fA-F]{24}$/)) {
+            return next(new BadRequestError('Невалидный ID пользователя'))
+        }
+
         const updatedUser = await User.findByIdAndUpdate(
-            req.params.id,
+            userId,
             req.body,
             {
                 new: true,
@@ -207,7 +227,13 @@ export const deleteCustomer = async (
     next: NextFunction
 ) => {
     try {
-        const deletedUser = await User.findByIdAndDelete(req.params.id).orFail(
+        // Проверяем ID
+        const userId = req.params.id
+        if (!userId.match(/^[0-9a-fA-F]{24}$/)) {
+            return next(new BadRequestError('Невалидный ID пользователя'))
+        }
+
+        const deletedUser = await User.findByIdAndDelete(userId).orFail(
             () =>
                 new NotFoundError(
                     'Пользователь по заданному id отсутствует в базе'

@@ -10,7 +10,26 @@ export const uploadFile = async (
     if (!req.file) {
         return next(new BadRequestError('Файл не загружен'))
     }
+
     try {
+        // Проверка на опасные символы в имени
+        // eslint-disable-next-line no-control-regex
+        const dangerousPattern = /[<>:"\\|?*\x00-\x1F]/g
+        if (dangerousPattern.test(req.file.originalname)) {
+            return next(new BadRequestError('Имя файла содержит недопустимые символы'))
+        }
+
+        // Проверка MIME типа
+        const allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
+        if (!allowedMimes.includes(req.file.mimetype)) {
+            return next(new BadRequestError('Недопустимый тип файла'))
+        }
+            
+        // Проверка размера
+        if (req.file.size > 5 * 1024 * 1024) {
+            return next(new BadRequestError('Файл слишком большой (макс 5MB)'))
+        }
+
         const fileName = process.env.UPLOAD_PATH
             ? `/${process.env.UPLOAD_PATH}/${req.file.filename}`
             : `/${req.file?.filename}`
