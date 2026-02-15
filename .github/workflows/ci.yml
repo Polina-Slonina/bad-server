@@ -1,6 +1,13 @@
-- name: Запуск всех сервисов
+- name: Проверка nginx
   run: |
+    docker exec $(docker ps -q -f name=nginx) nginx -t
+    docker exec $(docker ps -q -f name=nginx) curl http://localhost
+
+- name: Запуск контейнеров
+  run: |
+    docker-compose down
     docker-compose up -d
-    sleep 10
+    echo "Ожидание 30 секунд..."
+    sleep 30
     docker-compose ps
-    curl --retry 5 --retry-connrefused http://localhost
+    curl --retry 10 --retry-delay 3 --retry-connrefused http://localhost
