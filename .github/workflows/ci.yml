@@ -1,8 +1,6 @@
-- name: Запуск Docker-контейнеров
+- name: Запуск всех сервисов
   run: |
     docker-compose up -d
-    echo "Ожидаем запуска контейнеров..."
-    sleep 15
+    sleep 10
     docker-compose ps
-    echo "Проверяем доступность порта 80..."
-    curl -v http://localhost || true
+    curl --retry 5 --retry-connrefused http://localhost
