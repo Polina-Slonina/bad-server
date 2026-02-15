@@ -1,42 +1,10 @@
-name: CI Tests
-
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    
-    steps:
-    - uses: actions/checkout@v3
-    
-    - name: Установка Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
-    
-    - name: Установка зависимостей
-      run: npm ci
-    
-    - name: Запуск тестового сервера
-      run: |
-        node test-server.js &
-        echo "Ожидание запуска сервера..."
-        sleep 5
-        # Проверка, что сервер запущен
-        curl --retry 5 --retry-delay 2 --retry-connrefused http://localhost/api/health || exit 1
-        echo "Сервер запущен успешно"
-    
-    - name: Запуск тестов
-      run: npm test
-      env:
-        CI: true
-    
-    - name: Остановка сервера
-      if: always()
-      run: |
-        pkill -f "node test-server.js" || true
-        
+- name: Запуск Docker-контейнеров
+  run: |
+    docker-compose up -d
+    echo "Ожидание запуска контейнеров..."
+    sleep 15
+    docker-compose ps
+    # Проверка nginx
+    curl --retry 5 --retry-delay 3 --retry-connrefused http://localhost || exit 1
+    # Проверка бэкенда напрямую
+    curl --retry 5 --retry-delay 3 http://localhost:3000/api/health || true
