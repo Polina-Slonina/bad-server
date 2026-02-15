@@ -1,0 +1,8 @@
+- name: Запуск Docker-контейнеров
+  run: |
+    docker-compose up -d
+    echo "Ожидаем запуска контейнеров..."
+    sleep 15
+    docker-compose ps
+    echo "Проверяем доступность порта 80..."
+    curl -v http://localhost || true
