@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 import { constants } from 'http2'
+import path from 'path'
 import BadRequestError from '../errors/bad-request-error'
 
 export const uploadFile = async (
@@ -30,9 +31,12 @@ export const uploadFile = async (
             return next(new BadRequestError('Файл слишком большой (макс 5MB)'))
         }
 
+        const fileExt = path.extname(req.file.originalname)
+        const safeFileName = `${Date.now()}-${Math.random().toString(36).substring(7)}${fileExt}`
+
         const fileName = process.env.UPLOAD_PATH
-            ? `/${process.env.UPLOAD_PATH}/${req.file.filename}`
-            : `/${req.file?.filename}`
+            ? `/${process.env.UPLOAD_PATH}/${safeFileName}`
+            : `/${safeFileName}`
         return res.status(constants.HTTP_STATUS_CREATED).send({
             fileName,
             originalName: req.file?.originalname,

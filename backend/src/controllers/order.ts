@@ -30,7 +30,31 @@ export const getOrders = async (
             search = getStringQueryParam(req.query.search),
         } = req.query
 
+        // Проверка роли - если не админ, видит только свои заказы
+        const isAdmin = res.locals.user?.roles?.includes('admin')
+        if (!isAdmin) {
+            // Для обычного пользователя фильтруем только его заказы
+            const userOrders = await Order.find({ 
+                customer: res.locals.user._id 
+            }).populate(['customer', 'products'])
+            
+            return res.status(200).json({
+                orders: userOrders,
+                pagination: {
+                    totalOrders: userOrders.length,
+                    totalPages: 1,
+                    currentPage: 1,
+                    pageSize: userOrders.length,
+                },
+            })
+        }
+
         const filters: FilterQuery<Partial<IOrder>> = {}
+
+        if (req.query.group) {
+            // Не должно быть возможности влиять на group
+            return next(new BadRequestError('Group parameter not allowed'))
+        }
 
         if (status) {
             if (typeof status === 'object') {

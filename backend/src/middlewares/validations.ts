@@ -4,7 +4,7 @@ import { Types } from 'mongoose'
 import xss from 'xss'
 
 // eslint-disable-next-line no-useless-escape
-export const phoneRegExp = /^(\+\d+)?(?:\s|-?|\(?\d+\)?){5,20}$/
+export const phoneRegExp = /^[\+\d\s\-\(\)]{7,20}$/
 
 export enum PaymentType {
     Card = 'card',
