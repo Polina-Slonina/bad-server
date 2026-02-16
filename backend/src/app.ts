@@ -6,7 +6,7 @@ import express, { json, urlencoded } from 'express'
 import mongoose from 'mongoose'
 import path from 'path'
 // eslint-disable-next-line import/no-extraneous-dependencies
-import helmet from 'helmet';
+// import helmet from 'helmet';
 import { DB_ADDRESS } from './config'
 import errorHandler from './middlewares/error-handler'
 import serveStatic from './middlewares/serverStatic'
@@ -37,34 +37,34 @@ app.use(cookieParser())
 app.use(cors())
 // app.use(cors({ origin: ORIGIN_ALLOW, credentials: true }));
 // app.use(express.static(path.join(__dirname, 'public')));
-app.use(helmet({
-    // Настройка CSP
-    contentSecurityPolicy: {
-        directives: {
-            defaultSrc: ["'self'"],
-            styleSrc: ["'self'", "'unsafe-inline'"],
-            scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
-            imgSrc: ["'self'", "data:", "blob:", "http://localhost"],
-            connectSrc: ["'self'", "http://localhost"],
-            fontSrc: ["'self'"],
-            objectSrc: ["'none'"],
-            mediaSrc: ["'self'"],
-            frameSrc: ["'self'"],
-        },
-    },
-    // Разрешаем кросс-доменные запросы к ресурсам
-    crossOriginResourcePolicy: { policy: "cross-origin" },
-    // Отключаем COEP для совместимости
-    crossOriginEmbedderPolicy: false,
-    // Настройка HSTS (для production)
-    hsts: process.env.NODE_ENV === 'production' ? {
-        maxAge: 31536000,
-        includeSubDomains: true,
-        preload: true
-    } : false,
-    // Отключаем ненужные заголовки для разработки
-    referrerPolicy: { policy: "strict-origin-when-cross-origin" },
-}))
+// app.use(helmet({
+//     // Настройка CSP
+//     contentSecurityPolicy: {
+//         directives: {
+//             defaultSrc: ["'self'"],
+//             styleSrc: ["'self'", "'unsafe-inline'"],
+//             scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+//             imgSrc: ["'self'", "data:", "blob:", "http://localhost"],
+//             connectSrc: ["'self'", "http://localhost"],
+//             fontSrc: ["'self'"],
+//             objectSrc: ["'none'"],
+//             mediaSrc: ["'self'"],
+//             frameSrc: ["'self'"],
+//         },
+//     },
+//     // Разрешаем кросс-доменные запросы к ресурсам
+//     crossOriginResourcePolicy: { policy: "cross-origin" },
+//     // Отключаем COEP для совместимости
+//     crossOriginEmbedderPolicy: false,
+//     // Настройка HSTS (для production)
+//     hsts: process.env.NODE_ENV === 'production' ? {
+//         maxAge: 31536000,
+//         includeSubDomains: true,
+//         preload: true
+//     } : false,
+//     // Отключаем ненужные заголовки для разработки
+//     referrerPolicy: { policy: "strict-origin-when-cross-origin" },
+// }))
 
 app.use(serveStatic(path.join(__dirname, 'public')))
 
