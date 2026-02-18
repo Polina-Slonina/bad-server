@@ -59,7 +59,7 @@ export default multer({
     storage, 
     fileFilter, 
     limits: {
-        fileSize: 2048, // 2кб
+        fileSize: 5 * 2048 * 2048, // 
         files: 1,
         fields: 5
     } 
