@@ -30,8 +30,8 @@ export const uploadFile = async (
         }
             
         // Проверка размера
-        if (req.file.size > 5 * 1024 * 1024) {
-            return next(new BadRequestError('Файл слишком большой (макс 5MB)'))
+        if (req.file.size < 2048) { // 2KB
+             return res.status(400).json({ message: 'Файл слишком большой (макс 2кб)' });
         }
 
         const fileName = process.env.UPLOAD_PATH

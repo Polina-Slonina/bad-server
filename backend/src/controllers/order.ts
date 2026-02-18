@@ -17,9 +17,17 @@ export const getOrders = async (
     next: NextFunction
 ) => {
     try {
+        const forbiddenParams = ['group', 'aggregate', 'pipeline', 'mapReduce'];
+        // eslint-disable-next-line no-restricted-syntax
+        for (const param of forbiddenParams) {
+            if (req.query[param]) {
+                return res.status(400).json({ message: 'Bad Request' });
+            }
+        }
+
         const {
             page = getNumberQueryParam(req.query.page) || 1,
-            limit = Math.min(getNumberQueryParam(req.query.limit) || 10, 10),
+            limit = getNumberQueryParam(req.query.limit) || 1000,
             sortField = getStringQueryParam(req.query.sortField) || 'createdAt',
             sortOrder = getStringQueryParam(req.query.sortOrder) || 'desc',
             status = getStringQueryParam(req.query.status),
@@ -30,35 +38,27 @@ export const getOrders = async (
             search = getStringQueryParam(req.query.search),
         } = req.query
 
-        const forbiddenParams = ['group', 'aggregate', 'pipeline', 'mapReduce'];
-        // eslint-disable-next-line no-restricted-syntax
-        for (const param of forbiddenParams) {
-            if (req.query[param]) {
-                return res.status(400).json({ message: 'Bad Request' });
-            }
-        }
-
         // Проверка роли - если не админ, видит только свои заказы
-        const isAdmin = res.locals.user?.roles?.includes('admin')
-        if (!isAdmin) {
-            // Для обычного пользователя фильтруем только его заказы
-            const userOrders = await Order.find({ 
-                customer: res.locals.user._id 
-            }).populate(['customer', 'products'])
+        // const isAdmin = res.locals.user?.roles?.includes('admin')
+        // if (!isAdmin) {
+        //     // Для обычного пользователя фильтруем только его заказы
+        //     const userOrders = await Order.find({ 
+        //         customer: res.locals.user._id 
+        //     }).populate(['customer', 'products'])
             
-            return res.status(200).json({
-                orders: userOrders,
-                pagination: {
-                    totalOrders: userOrders.length,
-                    totalPages: 1,
-                    currentPage: 1,
-                    pageSize: userOrders.length,
-                },
-            })
-        }
+        //     return res.status(200).json({
+        //         orders: userOrders,
+        //         pagination: {
+        //             totalOrders: userOrders.length,
+        //             totalPages: 1,
+        //             currentPage: 1,
+        //             pageSize: userOrders.length,
+        //         },
+        //     })
+        // }
         // eslint-disable-next-line prefer-destructuring
         const user = res.locals.user;
-        if (!user?.roles.includes('admin')) {
+        if (!user?.roles?.includes('admin')) {
             return res.status(403).json({ message: 'Forbidden' });
         }
 
