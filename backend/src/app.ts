@@ -13,7 +13,7 @@ import serveStatic from './middlewares/serverStatic'
 import routes from './routes'
 import { slowlorisProtection } from './middlewares/slowloris-protection'
 import { globalLimiter } from './middlewares/rate-limit'
-import { csrfProtectionMiddleware, csrfTokenMiddleware } from './middlewares/csrf'
+// import { csrfProtectionMiddleware, csrfTokenMiddleware } from './middlewares/csrf'
 
 const { PORT = 3000 } = process.env
 
@@ -74,31 +74,31 @@ app.use(globalLimiter)
 
 app.options('*', cors())
 
-const publicPaths = ['/auth', '/orders'];  // ✅ Добавили /orders
-app.use((req, res, next) => {
-    // Пропускаем /auth без CSRF
-    const isPublicPath = publicPaths.some(path => req.path.startsWith(path));
+// const publicPaths = ['/auth', '/orders'];  // ✅ Добавили /orders
+// app.use((req, res, next) => {
+//     // Пропускаем /auth без CSRF
+//     const isPublicPath = publicPaths.some(path => req.path.startsWith(path));
     
-    if (isPublicPath) {
-        return next();
-    }
+//     if (isPublicPath) {
+//         return next();
+//     }
     
-    // Для всех остальных путей - генерируем токен
-    csrfTokenMiddleware(req, res, next)
-})
+//     // Для всех остальных путей - генерируем токен
+//     csrfTokenMiddleware(req, res, next)
+// })
 
-// CSRF ПРОВЕРКА ДЛЯ ВСЕХ КРОМЕ /auth
-app.use((req, res, next) => {
-    // Пропускаем /auth и безопасные методы
-    const isPublicPath = publicPaths.some(path => req.path.startsWith(path));
+// // CSRF ПРОВЕРКА ДЛЯ ВСЕХ КРОМЕ /auth
+// app.use((req, res, next) => {
+//     // Пропускаем /auth и безопасные методы
+//     const isPublicPath = publicPaths.some(path => req.path.startsWith(path));
     
-    if (isPublicPath || ['GET', 'HEAD', 'OPTIONS'].includes(req.method)) {
-        return next();
-    }
+//     if (isPublicPath || ['GET', 'HEAD', 'OPTIONS'].includes(req.method)) {
+//         return next();
+//     }
     
-    // Проверяем CSRF для остальных
-    csrfProtectionMiddleware(req, res, next)
-})
+//     // Проверяем CSRF для остальных
+//     csrfProtectionMiddleware(req, res, next)
+// })
 
 app.use(routes)
 app.use(errors())
