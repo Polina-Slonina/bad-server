@@ -13,6 +13,9 @@ export const uploadFile = async (
     }
 
     try {
+        const fileExt = path.extname(req.file.originalname)
+        const safeFileName = `${Date.now()}-${Math.random().toString(36).substring(7)}${fileExt}`
+
         // Проверка на опасные символы в имени
         // eslint-disable-next-line no-control-regex
         const dangerousPattern = /[<>:"\\|?*\x00-\x1F]/g
@@ -30,9 +33,6 @@ export const uploadFile = async (
         if (req.file.size > 5 * 1024 * 1024) {
             return next(new BadRequestError('Файл слишком большой (макс 5MB)'))
         }
-
-        const fileExt = path.extname(req.file.originalname)
-        const safeFileName = `${Date.now()}-${Math.random().toString(36).substring(7)}${fileExt}`
 
         const fileName = process.env.UPLOAD_PATH
             ? `/${process.env.UPLOAD_PATH}/${safeFileName}`

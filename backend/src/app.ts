@@ -7,7 +7,7 @@ import mongoose from 'mongoose'
 import path from 'path'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import helmet from 'helmet';
-import { DB_ADDRESS } from './config'
+import { DB_ADDRESS, ORIGIN_ALLOW } from './config'
 import errorHandler from './middlewares/error-handler'
 import serveStatic from './middlewares/serverStatic'
 import routes from './routes'
@@ -34,8 +34,8 @@ app.use(slowlorisProtection)
 
 app.use(cookieParser())
 
-app.use(cors())
-// app.use(cors({ origin: ORIGIN_ALLOW, credentials: true }));
+// app.use(cors())
+app.use(cors({ origin: ORIGIN_ALLOW, credentials: true }));
 // app.use(express.static(path.join(__dirname, 'public')));
 app.use(helmet({
     // Настройка CSP

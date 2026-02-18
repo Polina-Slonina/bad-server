@@ -45,7 +45,7 @@ const createProduct = async (
         // Переносим картинку из временной папки
         if (image) {
             movingFile(
-                image.fileName,
+                `${Date.now()}-${Math.random().toString(36).substring(7)}${image.fileName}`,
                 join(__dirname, `../public/${process.env.UPLOAD_PATH_TEMP}`),
                 join(__dirname, `../public/${process.env.UPLOAD_PATH}`)
             )
