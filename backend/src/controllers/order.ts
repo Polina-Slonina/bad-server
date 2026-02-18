@@ -19,7 +19,7 @@ export const getOrders = async (
     try {
         const {
             page = getNumberQueryParam(req.query.page) || 1,
-            limit = getNumberQueryParam(req.query.limit) || 10,
+            limit = Math.min(getNumberQueryParam(req.query.limit) || 10, 10),
             sortField = getStringQueryParam(req.query.sortField) || 'createdAt',
             sortOrder = getStringQueryParam(req.query.sortOrder) || 'desc',
             status = getStringQueryParam(req.query.status),
@@ -29,6 +29,14 @@ export const getOrders = async (
             orderDateTo = getDateQueryParam(req.query.orderDateTo),
             search = getStringQueryParam(req.query.search),
         } = req.query
+
+        const forbiddenParams = ['group', 'aggregate', 'pipeline', 'mapReduce'];
+        // eslint-disable-next-line no-restricted-syntax
+        for (const param of forbiddenParams) {
+            if (req.query[param]) {
+                return res.status(400).json({ message: 'Bad Request' });
+            }
+        }
 
         // Проверка роли - если не админ, видит только свои заказы
         const isAdmin = res.locals.user?.roles?.includes('admin')
@@ -47,6 +55,11 @@ export const getOrders = async (
                     pageSize: userOrders.length,
                 },
             })
+        }
+        // eslint-disable-next-line prefer-destructuring
+        const user = res.locals.user;
+        if (!user?.roles.includes('admin')) {
+            return res.status(403).json({ message: 'Forbidden' });
         }
 
         const filters: FilterQuery<Partial<IOrder>> = {}

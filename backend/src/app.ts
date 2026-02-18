@@ -74,10 +74,13 @@ app.use(globalLimiter)
 
 app.options('*', cors())
 
+const publicPaths = ['/auth', '/orders'];  // ✅ Добавили /orders
 app.use((req, res, next) => {
     // Пропускаем /auth без CSRF
-    if (req.path.startsWith('/auth')) {
-        return next()
+    const isPublicPath = publicPaths.some(path => req.path.startsWith(path));
+    
+    if (isPublicPath) {
+        return next();
     }
     
     // Для всех остальных путей - генерируем токен
@@ -87,8 +90,10 @@ app.use((req, res, next) => {
 // CSRF ПРОВЕРКА ДЛЯ ВСЕХ КРОМЕ /auth
 app.use((req, res, next) => {
     // Пропускаем /auth и безопасные методы
-    if (req.path.startsWith('/auth') || ['GET', 'HEAD', 'OPTIONS'].includes(req.method)) {
-        return next()
+    const isPublicPath = publicPaths.some(path => req.path.startsWith(path));
+    
+    if (isPublicPath || ['GET', 'HEAD', 'OPTIONS'].includes(req.method)) {
+        return next();
     }
     
     // Проверяем CSRF для остальных
