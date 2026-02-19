@@ -28,16 +28,14 @@ export const uploadFile = async (
         // if (!allowedMimes.includes(req.file.mimetype)) {
         //     return next(new BadRequestError('Недопустимый тип файла'))
         // }
-        if (req.file.mimetype === 'image/jpeg' || req.file.mimetype === 'image/png') {
-            // Для теста с некорректным файлом
-            if (req.file.size < 100) { // Слишком маленький для реального изображения
-                return res.status(400).json({ message: 'Invalid image metadata' });
-            }
-        }
-
         const allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
         if (!allowedMimes.includes(req.file.mimetype)) {
-            return res.status(400).json({ message: 'Invalid file type' });
+            console.log('Invalid MIME type - returning 400');
+            // ВАЖНО: возвращаем 400, НЕ используем next()
+            return res.status(400).json({ 
+                message: 'Invalid file type',
+                details: `Expected image, got ${req.file.mimetype}`
+            });
         }
             
         // Проверка размера
