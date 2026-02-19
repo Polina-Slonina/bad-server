@@ -25,10 +25,6 @@ function movingFile(imagePath: string, from: string, to: string) {
         throw new BadRequestError('Имя файла содержит недопустимые символы')
     }
 
-    const allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
-        if (!allowedMimes.includes(fileName)) {
-            return new BadRequestError('Недопустимый тип файла')
-        }
 
     const imagePathTemp = join(normalizedFrom, fileName)
     const imagePathPermanent = join(normalizedTo, fileName)

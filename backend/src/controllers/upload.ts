@@ -29,12 +29,16 @@ export const uploadFile = async (
         //     return next(new BadRequestError('Недопустимый тип файла'))
         // }
         const allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        console.log('Checking MIME type:', req.file.mimetype);
+        console.log(' Allowed MIME types:', allowedMimes);
+        
         if (!allowedMimes.includes(req.file.mimetype)) {
             console.log('Invalid MIME type - returning 400');
-            // ВАЖНО: возвращаем 400
+            // ВАЖНО: возвращаем 400, НЕ используем next()
             return res.status(400).json({ 
                 message: 'Invalid file type',
-                details: `Expected image, got ${req.file.mimetype}`
+                received: req.file.mimetype,
+                expected: allowedMimes
             });
         }
             
