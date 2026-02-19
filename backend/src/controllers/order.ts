@@ -27,7 +27,7 @@ export const getOrders = async (
 
         const {
             page = getNumberQueryParam(req.query.page) || 1,
-            limit = 1000,
+            limit = 10,
             sortField = getStringQueryParam(req.query.sortField) || 'createdAt',
             sortOrder = getStringQueryParam(req.query.sortOrder) || 'desc',
             status = getStringQueryParam(req.query.status),

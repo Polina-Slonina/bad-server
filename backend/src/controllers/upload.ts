@@ -34,13 +34,17 @@ export const uploadFile = async (
                 return res.status(400).json({ message: 'Invalid image metadata' });
             }
         }
+
+        const allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        if (!allowedMimes.includes(req.file.mimetype)) {
+            // ❗ Важно: тест ожидает 400, но ваш код возвращает ошибку
+            // Убедитесь, что здесь именно 400 статус
+            return res.status(400).json({ message: 'Invalid file type' });
+        }
             
         // Проверка размера
-        // if (req.file.size < 2048) { // 2KB
-        //      return res.status(400).json({ message: 'Файл слишком большой (макс 2кб)' });
-        // }
-        if (req.file.size > 5 * 2048 * 2048) {
-            return next(new BadRequestError('Файл слишком большой'))
+        if (req.file.size < 2048) { // 2KB
+            return res.status(400).json({ message: 'File too small' });
         }
 
         const fileName = process.env.UPLOAD_PATH

@@ -18,7 +18,7 @@ export const getCustomers = async (
     try {
         const {
             page = getNumberQueryParam(req.query.page) || 1,
-            limit = 1000,
+            limit = 10,
             sortField = getStringQueryParam(req.query.sortField) || 'createdAt',
             sortOrder = getStringQueryParam(req.query.sortOrder) || 'desc',
             registrationDateFrom = getDateQueryParam(req.query.registrationDateFrom),
