@@ -37,8 +37,6 @@ export const uploadFile = async (
 
         const allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
         if (!allowedMimes.includes(req.file.mimetype)) {
-            // ❗ Важно: тест ожидает 400, но ваш код возвращает ошибку
-            // Убедитесь, что здесь именно 400 статус
             return res.status(400).json({ message: 'Invalid file type' });
         }
             
