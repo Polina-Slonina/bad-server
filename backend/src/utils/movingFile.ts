@@ -13,7 +13,6 @@ function movingFile(imagePath: string, from: string, to: string) {
     const normalizedTo = normalize(to)
 
     const fileName = basename(imagePath)
-    console.log('📁 Extracted fileName:', fileName)
 
     // Проверка длины имени файла
     if (fileName.length > 255) {
