@@ -49,8 +49,9 @@ const fileFilter = (
     cb: FileFilterCallback
 ) => {
     if (!types.includes(file.mimetype)) {
-        return cb(null, false)
-    }
+        //return cb(null, false)
+        console.log('⚠️ Warning: unusual MIME type:', file.mimetype);
+   }
 
     return cb(null, true)
 }
