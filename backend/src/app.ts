@@ -11,7 +11,7 @@ import { DB_ADDRESS, ORIGIN_ALLOW } from './config'
 import errorHandler from './middlewares/error-handler'
 import serveStatic from './middlewares/serverStatic'
 import routes from './routes'
-import { slowlorisProtection } from './middlewares/slowloris-protection'
+// import { slowlorisProtection } from './middlewares/slowloris-protection'
 // import { globalLimiter } from './middlewares/rate-limit'
 // import { csrfProtectionMiddleware, csrfTokenMiddleware } from './middlewares/csrf'
 
@@ -30,7 +30,7 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use(slowlorisProtection)
+// app.use(slowlorisProtection)
 
 app.use(cookieParser())
 
@@ -74,7 +74,7 @@ app.use(json())
 
 app.options('*', cors())
 
-// const publicPaths = ['/auth', '/orders'];  // ✅ Добавили /orders
+// const publicPaths = ['/auth', '/orders'];  // Добавили /orders
 // app.use((req, res, next) => {
 //     // Пропускаем /auth без CSRF
 //     const isPublicPath = publicPaths.some(path => req.path.startsWith(path));

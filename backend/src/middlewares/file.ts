@@ -48,11 +48,6 @@ const fileFilter = (
     file: Express.Multer.File,
     cb: FileFilterCallback
 ) => {
-    // Для тестов в CI пропускаем все файлы
-    if (process.env.CI || process.env.NODE_ENV === 'test') {
-        return cb(null, true);
-    }
-    
     if (!types.includes(file.mimetype)) {
         return cb(null, false)
     }
