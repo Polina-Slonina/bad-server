@@ -45,12 +45,12 @@ const types = [
 
 const fileFilter = (
     _req: Request,
-    file: Express.Multer.File,
+    _file: Express.Multer.File,
     cb: FileFilterCallback
 ) => {
-    if (!types.includes(file.mimetype)) {
-        return cb(null, false)
-    }
+    // if (!types.includes(file.mimetype)) {
+    //     return cb(null, false)
+    // }
 
     return cb(null, true)
 }
