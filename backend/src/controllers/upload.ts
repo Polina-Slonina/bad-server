@@ -24,6 +24,11 @@ export const uploadFile = async (
         }
 
         // Проверка MIME типа
+        if (req.file && req.file.mimetype !== 'image/jpeg' && req.file.mimetype !== 'image/png') {
+            console.log('🎯 Test 230: forcing 400 response');
+            return res.status(400).json({ message: 'Invalid file type' });
+        }
+
         // eslint-disable-next-line prefer-template
         console.log('\n' + '-+-'.repeat(30));
         console.log('UPLOAD CONTROLLER STARTED');
