@@ -25,9 +25,11 @@ export const getOrders = async (
             }
         }
 
+        const rawLimit = req.query.limit === undefined ? 10 : Number(req.query.limit)
+
         const {
             page = 1,
-            limit = Math.min(req.query.limit === undefined ? 10 : Number(req.query.limit), 10),
+            limit = Math.min(rawLimit, 10),
             sortField = 'createdAt',
             sortOrder = 'desc',
             status,
