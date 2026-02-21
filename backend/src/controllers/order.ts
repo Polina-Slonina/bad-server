@@ -27,7 +27,7 @@ export const getOrders = async (
 
         const {
             page = 1,
-            limit = Math.min(Number(req.query.limit) || 10, 10),
+            limit = Math.max(Number(req.query.limit) || 10, 10),
             sortField = 'createdAt',
             sortOrder = 'desc',
             status,
@@ -195,7 +195,7 @@ export const getOrdersCurrentUser = async (
 ) => {
     try {
         const userId = res.locals.user._id
-        const { search, page = getNumberQueryParam(req.query.page as string) || 1, limit = Math.min(getNumberQueryParam(req.query.limit as string) || 5, 10) } = req.query
+        const { search, page = getNumberQueryParam(req.query.page as string) || 1, limit = Math.max(getNumberQueryParam(req.query.limit as string) || 5, 10) } = req.query
         const options = {
             skip: (Number(page) - 1) * Number(limit),
             limit: Number(limit),

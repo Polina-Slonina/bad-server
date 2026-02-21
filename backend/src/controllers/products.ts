@@ -12,7 +12,7 @@ import { getNumberQueryParam } from '../utils/query-params'
 // GET /product
 const getProducts = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { page = getNumberQueryParam(req.query.page as string) || 1, limit = Math.min(getNumberQueryParam(req.query.limit as string) || 5, 10) } = req.query
+        const { page = getNumberQueryParam(req.query.page as string) || 1, limit = Math.max(getNumberQueryParam(req.query.limit as string) || 5, 10) } = req.query
         const options = {
             skip: (Number(page) - 1) * Number(limit),
             limit: Number(limit),
