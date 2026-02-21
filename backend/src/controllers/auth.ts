@@ -9,7 +9,7 @@ import ConflictError from '../errors/conflict-error'
 import NotFoundError from '../errors/not-found-error'
 import UnauthorizedError from '../errors/unauthorized-error'
 import User from '../models/user'
-import { clearCsrfToken } from '../middlewares/csrf'
+// import { clearCsrfToken } from '../middlewares/csrf'
 
 // POST /auth/login
 const login = async (req: Request, res: Response, next: NextFunction) => {
@@ -125,7 +125,7 @@ const logout = async (req: Request, res: Response, next: NextFunction) => {
         await deleteRefreshTokenInUser(req, res, next)
 
         // Очищаем CSRF токен
-        clearCsrfToken(req, res, () => {})
+        // clearCsrfToken(req, res, () => {})
 
         const expireCookieOptions = {
             ...REFRESH_TOKEN.cookie.options,
