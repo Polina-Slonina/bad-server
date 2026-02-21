@@ -6,7 +6,7 @@ import Order, { IOrder } from '../models/order'
 import Product, { IProduct } from '../models/product'
 import User from '../models/user'
 import escapeRegExp from '../utils/escapeRegExp'
-import { getNumberQueryParam } from '../utils/query-params'
+// import { getNumberQueryParam } from '../utils/query-params'
 
 // eslint-disable-next-line max-len
 // GET /orders?page=2&limit=5&sort=totalAmount&order=desc&orderDateFrom=2024-07-01&orderDateTo=2024-08-01&status=delivering&totalAmountFrom=100&totalAmountTo=1000&search=%2B1
@@ -198,7 +198,14 @@ export const getOrdersCurrentUser = async (
 ) => {
     try {
         const userId = res.locals.user._id
-        const { search, page = getNumberQueryParam(req.query.page as string) || 1, limit = Math.min(getNumberQueryParam(req.query.limit as string) || 5, 10) } = req.query
+        const { search, page: rawPage, limit: rawLimit } = req.query
+
+        const page = Math.max(1, Number(rawPage) || 1)
+        const limit = Math.min(
+            rawLimit === undefined ? 5 : Math.max(1, Number(rawLimit)) || 5,
+            10  // Максимум 10
+        )
+
         const options = {
             skip: (Number(page) - 1) * Number(limit),
             limit: Number(limit),

@@ -18,7 +18,7 @@ export const getCustomers = async (
     try {
         const {
             page =  1,
-            limit = Math.min(Number(req.query.limit) || 10, 10),
+            limit: rawLimit,
             sortField = 'createdAt',
             sortOrder =  'desc',
             registrationDateFrom,
@@ -31,6 +31,12 @@ export const getCustomers = async (
             orderCountTo,
             search,
         } = req.query
+
+        // const page = Math.max(1, Number(page) || 1)
+        const limit = Math.min(
+            rawLimit === undefined ? 10 : Math.max(1, Number(rawLimit)) || 10,
+            10
+        )
 
         const filters: FilterQuery<Partial<IUser>> = {}
 
