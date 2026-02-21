@@ -24,12 +24,11 @@ export const getOrders = async (
                 return res.status(400).json({ message: 'Bad Request' });
             }
         }
-
-        const rawLimit = req.query.limit === undefined ? 10 : Number(req.query.limit)
+        // const rawLimit = req.query.limit === undefined ? 10 : Number(req.query.limit)
 
         const {
             page = 1,
-            limit = Math.min(rawLimit, 10),
+            limit: rawLimit,
             sortField = 'createdAt',
             sortOrder = 'desc',
             status,
@@ -39,6 +38,8 @@ export const getOrders = async (
             orderDateTo,
             search,
         } = req.query
+
+        const limit = Math.min(rawLimit === undefined ? 10 : Math.max(1, Number(rawLimit)) || 10, 10);
 
         // Проверка роли - если не админ, видит только свои заказы
         // const isAdmin = res.locals.user?.roles?.includes('admin')
