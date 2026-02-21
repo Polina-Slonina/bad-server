@@ -6,7 +6,7 @@ import Order, { IOrder } from '../models/order'
 import Product, { IProduct } from '../models/product'
 import User from '../models/user'
 import escapeRegExp from '../utils/escapeRegExp'
-import { getDateQueryParam, getNumberQueryParam, getStringQueryParam } from '../utils/query-params'
+import { getNumberQueryParam } from '../utils/query-params'
 
 // eslint-disable-next-line max-len
 // GET /orders?page=2&limit=5&sort=totalAmount&order=desc&orderDateFrom=2024-07-01&orderDateTo=2024-08-01&status=delivering&totalAmountFrom=100&totalAmountTo=1000&search=%2B1
@@ -26,16 +26,16 @@ export const getOrders = async (
         }
 
         const {
-            page = getNumberQueryParam(req.query.page) || 1,
+            page = 1,
             limit = 10,
-            sortField = getStringQueryParam(req.query.sortField) || 'createdAt',
-            sortOrder = getStringQueryParam(req.query.sortOrder) || 'desc',
-            status = getStringQueryParam(req.query.status),
-            totalAmountFrom = getNumberQueryParam(req.query.totalAmountFrom),
-            totalAmountTo = getNumberQueryParam(req.query.totalAmountTo),
-            orderDateFrom = getDateQueryParam(req.query.orderDateFrom),
-            orderDateTo = getDateQueryParam(req.query.orderDateTo),
-            search = getStringQueryParam(req.query.search),
+            sortField = 'createdAt',
+            sortOrder = 'desc',
+            status,
+            totalAmountFrom,
+            totalAmountTo,
+            orderDateFrom,
+            orderDateTo,
+            search,
         } = req.query
 
         // Проверка роли - если не админ, видит только свои заказы

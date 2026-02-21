@@ -18,8 +18,8 @@ import routes from './routes'
 const { PORT = 3000 } = process.env
 
 // Увеличиваем лимиты
-process.setMaxListeners(0);
-require('events').EventEmitter.defaultMaxListeners = 0;
+// process.setMaxListeners(0);
+// require('events').EventEmitter.defaultMaxListeners = 0;
 
 const app = express()
 
