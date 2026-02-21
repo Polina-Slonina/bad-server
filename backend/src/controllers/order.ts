@@ -17,13 +17,14 @@ export const getOrders = async (
     next: NextFunction
 ) => {
     try {
-        const forbiddenParams = ['group', 'aggregate', 'pipeline', 'mapReduce', 'unwind', 'sort', 'skip', 'unwind', 'lookup', 'facet', 'bucket', 'sortByCount', 'groupBy', 'match', 'project'];
+        const aggregationParams = ['group', 'aggregate', 'pipeline', 'mapReduce', 'unwind', 'sort', 'skip', 'unwind', 'lookup', 'facet', 'bucket', 'sortByCount', 'groupBy', 'match', 'project'];
         // eslint-disable-next-line no-restricted-syntax
-        for (const param of forbiddenParams) {
-            if (req.query[param]) {
-                return res.status(400).json({ message: 'Bad Request' });
-            }
+        for (const param of aggregationParams) {
+        if (req.query[param] !== undefined) {
+            console.log(`Блокируем ${param}`);
+            return res.status(400).json({ message: 'Bad Request' });
         }
+    }
 
         // Проверяем, нет ли операторов MongoDB в query
         const queryString = JSON.stringify(req.query);
