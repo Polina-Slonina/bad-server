@@ -17,23 +17,11 @@ export const getOrders = async (
     next: NextFunction
 ) => {
     try {
-        const dangerousParams = ['group', 'aggregate', 'pipeline', 'mapReduce', 'unwind', 'group', 'sort', 'limit', 'skip'];
+        const forbiddenParams = ['group', 'aggregate', 'pipeline', 'mapReduce', 'unwind', 'group', 'sort', 'limit', 'skip'];
         // eslint-disable-next-line no-restricted-syntax
-        for (const param of dangerousParams) {
-            if (req.query[param] !== undefined) {
-                console.log(` Blocked aggregation parameter: ${param}`);
+        for (const param of forbiddenParams) {
+            if (req.query[param]) {
                 return res.status(400).json({ message: 'Bad Request' });
-            }
-        }
-
-        // Также проверьте тело запроса, если это POST
-        if (req.method === 'POST' && req.body) {
-            const dangerousBodyParams = ['$group', '$aggregate', '$pipeline'];
-            // eslint-disable-next-line no-restricted-syntax
-            for (const param of dangerousBodyParams) {
-                if (JSON.stringify(req.body).includes(param)) {
-                    return res.status(400).json({ message: 'Bad Request' });
-                }
             }
         }
 
