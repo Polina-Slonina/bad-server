@@ -51,7 +51,12 @@ export const uploadFile = async (
             console.log('- Response body:', { message: 'Invalid file type' });
             console.log('^) File filter - allowing all files:', req.file.mimetype);
             res.setHeader('X-Test-230', 'passed');
-            return res.status(400).json({ message: 'Invalid file type' });
+            console.log('🔴 Response headers being set:', {
+                'Content-Type': 'application/json'
+            });
+            return res.status(400)
+                .setHeader('Content-Type', 'application/json')
+                .json({ message: 'Invalid file type' });
         }
             
         // Проверка размера

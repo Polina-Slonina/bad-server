@@ -52,7 +52,7 @@ const fileFilter = (
     //     console.log(' File filter - allowing all files:', file.mimetype);
     //     return cb(null, false)
     // }
-
+    
     console.log('📁 File filter - allowing all files:', file.mimetype);
     return cb(null, true)
 }
