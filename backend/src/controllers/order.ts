@@ -17,7 +17,7 @@ export const getOrders = async (
     next: NextFunction
 ) => {
     try {
-        const forbiddenParams = ['group', 'aggregate', 'pipeline', 'mapReduce'];
+        const forbiddenParams = ['group', 'aggregate', 'pipeline', 'mapReduce', 'unwind', 'group', 'sort', 'skip'];
         // eslint-disable-next-line no-restricted-syntax
         for (const param of forbiddenParams) {
             if (req.query[param]) {
