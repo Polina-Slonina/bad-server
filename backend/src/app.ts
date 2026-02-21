@@ -101,11 +101,6 @@ app.options('*', cors())
 // })
 
 // Редирект для теста
-app.use('/api/upload', (req, _res, next) => {
-    console.log('🔄 Redirecting /api/upload to /upload');
-    req.url = '/upload';
-    next();
-});
 
 app.use(routes)
 app.use(errors())
