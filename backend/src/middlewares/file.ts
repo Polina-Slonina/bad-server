@@ -50,11 +50,6 @@ const fileFilter = (
     file: Express.Multer.File,
     cb: FileFilterCallback
 ) => {
-    if (file.size > 1024 * 1024 && file.mimetype === 'image/png') {
-            console.log(' Test 230: 5MB image file - returning 400');
-            return cb(null, false)
-    }
-    
     if (!types.includes(file.mimetype)) {
         return cb(null, false)
     }

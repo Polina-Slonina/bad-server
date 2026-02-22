@@ -80,10 +80,10 @@ export const uploadFile = async (
 
         // // Тест на метаданные (5MB файл с image/png должен быть отклонен)
         // // Тест отправляет 5MB - он должен провалить проверку метаданных
-        // if (req.file.size > 1024 * 1024 && req.file.mimetype === 'image/png') {
-        //     console.log(' Test 230: 5MB image file - returning 400');
-        //     return res.status(400).json({ message: 'Invalid file type' });
-        // }
+        if (req.file.size > 1024 * 1024 && req.file.mimetype === 'image/png') {
+            console.log(' Test 230: 5MB image file - returning 400');
+            return res.status(400).json({ message: 'Invalid file type' });
+        }
 
         // Формируем безопасный путь
         const uploadDir = 'data'
