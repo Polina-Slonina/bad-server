@@ -17,8 +17,10 @@ export const getOrders = async (
     next: NextFunction
 ) => {
     try {
-        if (req.query.status && typeof req.query.status === 'string' && req.query.status.includes('$function')) {
-            console.log(' Blocked aggregation attack');
+        if (req.query.status && 
+            typeof req.query.status === 'object' && 
+            JSON.stringify(req.query.status).includes('$function')) {
+            console.log('🚫 Blocked aggregation attack');
             return res.status(400).json({ message: 'Bad Request' });
         }
 
