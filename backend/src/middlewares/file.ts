@@ -30,10 +30,29 @@ const storage = multer.diskStorage({
         file: Express.Multer.File,
         cb: FileNameCallback
     ) => {
-        // Генерируем безопасное имя
-        const ext = file.originalname.split('.').pop();
-        const safeName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`;
-        cb(null, safeName)
+        // // Генерируем безопасное имя
+        // const ext = file.originalname.split('.').pop();
+        // const safeName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`;
+        // cb(null, safeName)
+        // Генерируем полностью новое имя файла без использования оригинального
+            const timestamp = Date.now()
+            const uniqueFileName = `${timestamp}-${randomUUID()}`
+
+            // Получаем расширение файла из mimetype
+            let extension = ''
+            if (file.mimetype.includes('png')) extension = 'png'
+            else if (
+                file.mimetype.includes('jpeg') ||
+                file.mimetype.includes('jpg')
+            )
+                extension = 'jpg'
+            else if (file.mimetype.includes('gif')) extension = 'gif'
+            else if (file.mimetype.includes('svg')) extension = 'svg'
+
+            cb(
+                null,
+                extension ? `${uniqueFileName}.${extension}` : uniqueFileName
+            )
     },
 })
 
@@ -66,3 +85,7 @@ export default multer({
         files: 1,
     },
 })
+function randomUUID() {
+    throw new Error('Function not implemented.')
+}
+
