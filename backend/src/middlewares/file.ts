@@ -5,6 +5,9 @@ import { join } from 'path'
 type DestinationCallback = (error: Error | null, destination: string) => void
 type FileNameCallback = (error: Error | null, filename: string) => void
 
+export const MIN_FILE_SIZE_BYTES = 2 * 1024 // 2KB
+const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024 // 10MB
+
 const storage = multer.diskStorage({
     destination: (
         _req: Request,
@@ -47,9 +50,9 @@ const fileFilter = (
     file: Express.Multer.File,
     cb: FileFilterCallback
 ) => {
-    // if (!types.includes(file.mimetype)) {
-    //     return cb(null, false)
-    // }
+    if (!types.includes(file.mimetype)) {
+        return cb(null, false)
+    }
 
     console.log('📁 File filter - allowing all files:', file.mimetype);
     return cb(null, true)
@@ -57,5 +60,9 @@ const fileFilter = (
 
 export default multer({ 
     storage, 
-    fileFilter
+    fileFilter,
+    limits: {
+        fileSize: MAX_FILE_SIZE_BYTES,
+        files: 1,
+    },
 })
