@@ -12,6 +12,12 @@ export const uploadFile = async (
     }
 
     try {
+        console.log('\n📤 UPLOAD CONTROLLER STARTED');
+    
+        if (!req.file) {
+            console.log('No file - возможно файл отфильтрован в fileFilter');
+            return next(new BadRequestError('Файл не загружен'))
+        }
         // const fileExt = path.extname(req.file.originalname)
         // const safeFileName = `${Date.now()}-${Math.random().toString(36).substring(7)}${fileExt}`
 
@@ -88,7 +94,7 @@ export const uploadFile = async (
             fileName,
             originalName: req.file.originalname
         });
-        
+
         return res.status(constants.HTTP_STATUS_CREATED).send({
             fileName,
             originalName: req.file?.originalname,
