@@ -73,14 +73,14 @@ export const uploadFile = async (
         //     return res.status(400).json({ message: 'File too small' });
         // }
 
-        // Проверка минимального размера (для теста > 2KB)
-        if (req.file.size < 2048) { // меньше 2KB
-            console.log('File too small - returning 400');
-            return res.status(400).json({ message: 'File too small (min 2KB)' });
-        }
+        // // Проверка минимального размера (для теста > 2KB)
+        // if (req.file.size < 2048) { // меньше 2KB
+        //     console.log('File too small - returning 400');
+        //     return res.status(400).json({ message: 'File too small (min 2KB)' });
+        // }
 
-        // Проверка максимального размера (для теста < 5MB)
-        if (req.file.size > 5 * 1024 * 1024) { // больше 5MB
+        // Проверка максимального размера (для теста < 10MB)
+        if (req.file.size > 10 * 1024 * 1024) { // больше 10MB
             console.log('File too large - returning 400');
             return res.status(400).json({ message: 'File too large (max 10MB)' });
         }
