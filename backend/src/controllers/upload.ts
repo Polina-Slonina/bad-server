@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import { constants } from 'http2'
 import BadRequestError from '../errors/bad-request-error'
+import path from 'path'
 
 export const uploadFile = async (
     req: Request,
@@ -12,14 +13,8 @@ export const uploadFile = async (
     }
 
     try {
-        console.log('\n📤 UPLOAD CONTROLLER STARTED');
-    
-        if (!req.file) {
-            console.log('No file - возможно файл отфильтрован в fileFilter');
-            return next(new BadRequestError('Файл не загружен'))
-        }
-        // const fileExt = path.extname(req.file.originalname)
-        // const safeFileName = `${Date.now()}-${Math.random().toString(36).substring(7)}${fileExt}`
+        const fileExt = path.extname(req.file.originalname)
+        const safeFileName = `${Date.now()}-${Math.random().toString(36).substring(7)}${fileExt}`
 
         // Проверка на опасные символы в имени
         // eslint-disable-next-line no-control-regex
@@ -30,17 +25,9 @@ export const uploadFile = async (
 
         // Проверка MIME типа
         // if (req.file && req.file.mimetype !== 'image/jpeg' && req.file.mimetype !== 'image/png') {
-        //     console.log('🎯 Test 230: forcing 400 response');
+        //     console.log(' Test 230: forcing 400 response');
         //     return res.status(400).json({ message: 'Invalid file type' });
         // }
-
-        // eslint-disable-next-line prefer-template
-        console.log('\n' + '-+-'.repeat(30));
-        console.log('UPLOAD CONTROLLER STARTED');
-        console.log('+-+'.repeat(30));
-        
-        console.log(' Headers:', req.headers);
-        console.log(' Body:', req.body);
 
         console.log('File received:', {
             originalname: req.file.originalname,
@@ -53,14 +40,6 @@ export const uploadFile = async (
 
         const allowedMimes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/svg+xml'];
         if (!allowedMimes.includes(req.file.mimetype)) {
-            console.log(' Not an image - sending 400 response');
-            console.log('+ Response status: 400');
-            console.log('- Response body:', { message: 'Invalid file type' });
-            console.log('^) File filter - allowing all files:', req.file.mimetype);
-            res.setHeader('X-Test-230', 'passed');
-            console.log('== Response headers being set:', {
-                'Content-Type': 'application/json'
-            });
             return res.status(400)
                 .json({ message: 'Invalid file type' });
         }
@@ -87,17 +66,12 @@ export const uploadFile = async (
         }
 
         const fileName = process.env.UPLOAD_PATH
-            ? `/${process.env.UPLOAD_PATH}/${req.file.filename}`
-            : `/${req.file.filename}`
-
-        console.log('📤✅ Success! Sending response:', {
-            fileName,
-            originalName: req.file.originalname
-        });
+            ? `/${process.env.UPLOAD_PATH}/${safeFileName}`
+            : `/${safeFileName}`
 
         return res.status(constants.HTTP_STATUS_CREATED).send({
             fileName,
-            originalName: req.file?.originalname,
+            originalName: req.file.originalname,
         })
     } catch (error) {
         return next(error)
