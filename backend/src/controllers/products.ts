@@ -7,11 +7,12 @@ import ConflictError from '../errors/conflict-error'
 import NotFoundError from '../errors/not-found-error'
 import Product from '../models/product'
 import movingFile from '../utils/movingFile'
+import { getNumberQueryParam } from '../utils/query-params'
 
 // GET /product
 const getProducts = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { page = Math.max(1, Number(req.query.page) || 1), limit = Math.min(100, Number(req.query.limit) || 5) } = req.query
+        const { page = getNumberQueryParam(req.query.page as string) || 1, limit = Math.min(getNumberQueryParam(req.query.limit as string) || 5, 10) } = req.query
         const options = {
             skip: (Number(page) - 1) * Number(limit),
             limit: Number(limit),

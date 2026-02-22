@@ -1,9 +1,12 @@
-import { Request, Express } from 'express'
+import { Request, Express, NextFunction } from 'express'
 import multer, { FileFilterCallback } from 'multer'
 import { join } from 'path'
 
 type DestinationCallback = (error: Error | null, destination: string) => void
 type FileNameCallback = (error: Error | null, filename: string) => void
+
+export const MIN_FILE_SIZE_BYTES = 2 * 1024 // 2KB
+const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024 // 10MB
 
 const storage = multer.diskStorage({
     destination: (
@@ -27,7 +30,10 @@ const storage = multer.diskStorage({
         file: Express.Multer.File,
         cb: FileNameCallback
     ) => {
-        cb(null, file.originalname)
+        // Генерируем безопасное имя
+        const ext = file.originalname.split('.').pop();
+        const safeName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`;
+        cb(null, safeName)
     },
 })
 
@@ -48,15 +54,15 @@ const fileFilter = (
         return cb(null, false)
     }
 
+    console.log('📁 File filter - allowing all files:', file.mimetype);
     return cb(null, true)
 }
 
 export default multer({ 
     storage, 
-    fileFilter, 
+    fileFilter,
     limits: {
-        fileSize: 5 * 1024 * 1024, // 5MB
+        fileSize: MAX_FILE_SIZE_BYTES,
         files: 1,
-        fields: 5
-    } 
+    },
 })

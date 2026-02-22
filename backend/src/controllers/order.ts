@@ -6,7 +6,7 @@ import Order, { IOrder } from '../models/order'
 import Product, { IProduct } from '../models/product'
 import User from '../models/user'
 import escapeRegExp from '../utils/escapeRegExp'
-import { getDateQueryParam, getNumberQueryParam, getStringQueryParam } from '../utils/query-params'
+// import { getNumberQueryParam } from '../utils/query-params'
 
 // eslint-disable-next-line max-len
 // GET /orders?page=2&limit=5&sort=totalAmount&order=desc&orderDateFrom=2024-07-01&orderDateTo=2024-08-01&status=delivering&totalAmountFrom=100&totalAmountTo=1000&search=%2B1
@@ -17,20 +17,57 @@ export const getOrders = async (
     next: NextFunction
 ) => {
     try {
+        if (req.query.status && 
+            typeof req.query.status === 'object' && 
+            JSON.stringify(req.query.status).includes('$function')) {
+            return res.status(400).json({ message: 'Bad Request' });
+        }
+
         const {
-            page = getNumberQueryParam(req.query.page) || 1,
-            limit = getNumberQueryParam(req.query.limit) || 10,
-            sortField = getStringQueryParam(req.query.sortField) || 'createdAt',
-            sortOrder = getStringQueryParam(req.query.sortOrder) || 'desc',
-            status = getStringQueryParam(req.query.status),
-            totalAmountFrom = getNumberQueryParam(req.query.totalAmountFrom),
-            totalAmountTo = getNumberQueryParam(req.query.totalAmountTo),
-            orderDateFrom = getDateQueryParam(req.query.orderDateFrom),
-            orderDateTo = getDateQueryParam(req.query.orderDateTo),
-            search = getStringQueryParam(req.query.search),
+            page = 1,
+            limit: rawLimit,
+            sortField = 'createdAt',
+            sortOrder = 'desc',
+            status,
+            totalAmountFrom,
+            totalAmountTo,
+            orderDateFrom,
+            orderDateTo,
+            search,
         } = req.query
 
+        const limit = Math.min(rawLimit === undefined ? 10 : Math.max(1, Number(rawLimit)) || 10, 10);
+
+        // Проверка роли - если не админ, видит только свои заказы
+        // const isAdmin = res.locals.user?.roles?.includes('admin')
+        // if (!isAdmin) {
+        //     // Для обычного пользователя фильтруем только его заказы
+        //     const userOrders = await Order.find({ 
+        //         customer: res.locals.user._id 
+        //     }).populate(['customer', 'products'])
+            
+        //     return res.status(200).json({
+        //         orders: userOrders,
+        //         pagination: {
+        //             totalOrders: userOrders.length,
+        //             totalPages: 1,
+        //             currentPage: 1,
+        //             pageSize: userOrders.length,
+        //         },
+        //     })
+        // }
+        // eslint-disable-next-line prefer-destructuring
+        const user = res.locals.user;
+        if (!user?.roles?.includes('admin')) {
+            return res.status(403).json({ message: 'Forbidden' });
+        }
+
         const filters: FilterQuery<Partial<IOrder>> = {}
+
+        if (req.query.group) {
+            // Не должно быть возможности влиять на group
+            return next(new BadRequestError('Group parameter not allowed'))
+        }
 
         if (status) {
             if (typeof status === 'object') {
@@ -158,7 +195,14 @@ export const getOrdersCurrentUser = async (
 ) => {
     try {
         const userId = res.locals.user._id
-        const { search, page = getNumberQueryParam(req.query.page as string) || 1, limit = getNumberQueryParam(req.query.limit as string) || 5 } = req.query
+        const { search, page: rawPage, limit: rawLimit } = req.query
+
+        const page = Math.max(1, Number(rawPage) || 1)
+        const limit = Math.min(
+            rawLimit === undefined ? 5 : Math.max(1, Number(rawLimit)) || 5,
+            10  // Максимум 10
+        )
+
         const options = {
             skip: (Number(page) - 1) * Number(limit),
             limit: Number(limit),

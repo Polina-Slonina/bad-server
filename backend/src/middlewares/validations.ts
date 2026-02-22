@@ -2,9 +2,13 @@ import { Joi, celebrate } from 'celebrate'
 import { Types } from 'mongoose'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import xss from 'xss'
+import { Request, Response, NextFunction } from 'express'
+import fs from 'fs'
+import { fileTypeFromBuffer } from 'file-type'
+import BadRequestError from '../errors/bad-request-error'
 
 // eslint-disable-next-line no-useless-escape
-export const phoneRegExp = /^(\+\d+)?(?:\s|-?|\(?\d+\)?){5,20}$/
+export const phoneRegExp = /^[\+\d\s\-\(\)]{7,20}$/
 
 export enum PaymentType {
     Card = 'card',
@@ -164,3 +168,52 @@ export const validateAuthentication = celebrate({
         }),
     }),
 })
+
+const allowedTypes = [
+    'image/png',
+    'image/jpg',
+    'image/jpeg',
+    'image/gif',
+    'image/svg+xml',
+]
+
+export const validateMetadata = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    if (!req.file) {
+        return next()
+    }
+
+    try {
+        // Читаем первые байты файла для определения реального типа
+        const buffer = Buffer.alloc(4100)
+        const fd = fs.openSync(req.file.path, 'r')
+        fs.readSync(fd, buffer, 0, buffer.length, 0)
+        fs.closeSync(fd)
+
+        const detectedType = await fileTypeFromBuffer(buffer)
+
+        // Проверка метаданных - если тип не определен или не разрешен
+        if (!detectedType || !allowedTypes.includes(detectedType.mime)) {
+            // Удаляем файл
+            if (fs.existsSync(req.file.path)) {
+                fs.unlinkSync(req.file.path)
+            }
+            
+            console.log(' Test 230: invalid metadata - returning 400');
+            const error = new BadRequestError('Invalid file type');
+            return next(error);
+        }
+
+        // Обновляем mimetype на реальный
+        req.file.mimetype = detectedType.mime;
+        next();
+    } catch (error) {
+        if (req.file?.path && fs.existsSync(req.file.path)) {
+            fs.unlinkSync(req.file.path)
+        }
+        next(new BadRequestError('File validation failed'));
+    }
+};

@@ -5,7 +5,7 @@ import Order from '../models/order'
 import User, { IUser } from '../models/user'
 import BadRequestError from '../errors/bad-request-error'
 import escapeRegExp from '../utils/escapeRegExp'
-import { getDateQueryParam, getNumberQueryParam, getStringQueryParam } from '../utils/query-params'
+// import { getDateQueryParam, getNumberQueryParam, getStringQueryParam } from '../utils/query-params'
 
 // TODO: Добавить guard admin
 // eslint-disable-next-line max-len
@@ -17,20 +17,26 @@ export const getCustomers = async (
 ) => {
     try {
         const {
-            page = getNumberQueryParam(req.query.page) || 1,
-            limit = getNumberQueryParam(req.query.limit) || 10,
-            sortField = getStringQueryParam(req.query.sortField) || 'createdAt',
-            sortOrder = getStringQueryParam(req.query.sortOrder) || 'desc',
-            registrationDateFrom = getDateQueryParam(req.query.registrationDateFrom),
-            registrationDateTo = getDateQueryParam(req.query.registrationDateTo),
-            lastOrderDateFrom = getDateQueryParam(req.query.lastOrderDateFrom),
-            lastOrderDateTo = getDateQueryParam(req.query.lastOrderDateTo),
-            totalAmountFrom = getNumberQueryParam(req.query.totalAmountFrom),
-            totalAmountTo = getNumberQueryParam(req.query.totalAmountTo),
-            orderCountFrom = getNumberQueryParam(req.query.orderCountFrom),
-            orderCountTo = getNumberQueryParam(req.query.orderCountTo),
-            search = getStringQueryParam(req.query.search),
+            page =  1,
+            limit: rawLimit,
+            sortField = 'createdAt',
+            sortOrder =  'desc',
+            registrationDateFrom,
+            registrationDateTo,
+            lastOrderDateFrom,
+            lastOrderDateTo,
+            totalAmountFrom,
+            totalAmountTo,
+            orderCountFrom,
+            orderCountTo,
+            search,
         } = req.query
+
+        // const page = Math.max(1, Number(page) || 1)
+        const limit = Math.min(
+            rawLimit === undefined ? 10 : Math.max(1, Number(rawLimit)) || 10,
+            10
+        )
 
         const filters: FilterQuery<Partial<IUser>> = {}
 
