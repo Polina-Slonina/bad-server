@@ -42,6 +42,10 @@ export const uploadFile = async (
             return next(new BadRequestError('Файл не загружен'))
         }
 
+        if (!req.file.mimetype.startsWith('image/')) {
+            return res.status(400).json({ message: 'Invalid file type' });
+        }
+
         console.log('File received:', {
             originalname: req.file.originalname,
             mimetype: req.file.mimetype,
@@ -65,7 +69,7 @@ export const uploadFile = async (
         }
             
         // Проверка размера
-        if (req.file.size < 2048) { // 2KB
+        if (req.file.size < 2 * 1024 * 1024) { // 2KB
             return res.status(400).json({ message: 'File too small' });
         }
 

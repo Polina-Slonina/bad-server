@@ -52,7 +52,7 @@ const fileFilter = (
     //     console.log(' File filter - allowing all files:', file.mimetype);
     //     return cb(null, false)
     // }
-    
+
     console.log('📁 File filter - allowing all files:', file.mimetype);
     return cb(null, true)
 }
@@ -61,7 +61,7 @@ export default multer({
     storage, 
     fileFilter, 
     limits: {
-        fileSize: 5 * 2048 * 2048, // 
+        fileSize: 2 * 1024 * 1024, // 
         files: 1,
         fields: 5
     } 
