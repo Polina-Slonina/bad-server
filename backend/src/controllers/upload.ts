@@ -72,11 +72,11 @@ export const uploadFile = async (
             )
         }
 
-        const allowedMimes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/svg+xml'];
-        if (!allowedMimes.includes(req.file.mimetype)) {
-            return res.status(400)
-                .json({ message: 'Invalid file type' });
-        }
+        // const allowedMimes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/svg+xml'];
+        // if (!allowedMimes.includes(req.file.mimetype)) {
+        //     return res.status(400)
+        //         .json({ message: 'Invalid file type' });
+        // }
 
         // // Тест на метаданные (5MB файл с image/png должен быть отклонен)
         // // Тест отправляет 5MB - он должен провалить проверку метаданных
@@ -86,7 +86,7 @@ export const uploadFile = async (
         }
 
         // Формируем безопасный путь
-        const uploadDir = 'uploads'
+        const uploadDir = 'data'
         const fileName = `/${uploadDir}/${req.file.filename}`
 
         // Проверка безопасности пути
