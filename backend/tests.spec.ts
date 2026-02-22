@@ -5,10 +5,6 @@ import { test, expect } from '@playwright/test';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import shell from 'shelljs';
 
-process.env.API_URL = 'http://localhost:3000';
-process.env.ADMIN_TOKEN = 'test-token';
-process.env.USER_TOKEN = 'test-token';
-
 // eslint-disable-next-line no-promise-executor-return
 const wait = (ms: number) => new Promise(res => setTimeout(res, ms));
 

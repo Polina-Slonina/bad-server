@@ -40,7 +40,9 @@ export const uploadFile = async (
             originalname: req.file.originalname,
             mimetype: req.file.mimetype,
             size: req.file.size,
-            filename: req.file.filename
+            filename: req.file.filename,
+            path: req.file.path,
+            destination: req.file.destination,
         });
 
         const allowedMimes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/svg+xml'];
