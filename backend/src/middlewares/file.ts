@@ -48,7 +48,7 @@ const fileFilter = (
     cb: FileFilterCallback
 ) => {
     if (!types.includes(file.mimetype)) {
-        return cb(null, false)
+        return cb(null, true)
     }
 
     console.log('📁 File filter - allowing all files:', file.mimetype);

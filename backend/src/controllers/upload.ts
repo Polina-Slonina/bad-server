@@ -17,25 +17,18 @@ export const uploadFile = async (
 
         // Проверка на опасные символы в имени
         // eslint-disable-next-line no-control-regex
-        // const dangerousPattern = /[<>:"\\|?*\x00-\x1F]/g
-        // if (dangerousPattern.test(req.file.originalname)) {
-        //     return next(new BadRequestError('Имя файла содержит недопустимые символы'))
-        // }
+        const dangerousPattern = /[<>:"\\|?*\x00-\x1F]/g
+        if (dangerousPattern.test(req.file.originalname)) {
+            return next(new BadRequestError('Имя файла содержит недопустимые символы'))
+        }
 
         // Проверка MIME типа
         // if (req.file && req.file.mimetype !== 'image/jpeg' && req.file.mimetype !== 'image/png') {
-        //     console.log(' Test 230: forcing 400 response');
+        //     console.log('🎯 Test 230: forcing 400 response');
         //     return res.status(400).json({ message: 'Invalid file type' });
         // }
 
-        console.log('File received:', {
-            originalname: req.file.originalname,
-            mimetype: req.file.mimetype,
-            size: req.file.size,
-            filename: req.file.filename,
-            path: req.file.path,
-            destination: req.file.destination,
-        });
+        // eslint-disable-next-line prefer-template
 
         const allowedMimes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/svg+xml'];
         if (!allowedMimes.includes(req.file.mimetype)) {
@@ -67,10 +60,9 @@ export const uploadFile = async (
         const fileName = process.env.UPLOAD_PATH
             ? `/${process.env.UPLOAD_PATH}/${req.file.filename}`
             : `/${req.file.filename}`
-
         return res.status(constants.HTTP_STATUS_CREATED).send({
             fileName,
-            originalName: req.file.originalname,
+            originalName: req.file?.originalname,
         })
     } catch (error) {
         return next(error)
