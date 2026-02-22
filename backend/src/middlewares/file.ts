@@ -28,9 +28,9 @@ const storage = multer.diskStorage({
         cb: FileNameCallback
     ) => {
         // Генерируем безопасное имя
-        // const ext = file.originalname.split('.').pop();
-        // const safeName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`;
-        cb(null, file.originalname)
+        const ext = file.originalname.split('.').pop();
+        const safeName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`;
+        cb(null, safeName)
     },
 })
 

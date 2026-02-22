@@ -173,7 +173,7 @@ test.describe('Проверка загрузки файлов', () => {
     const imagePath = path.join(process.cwd(), 'data/mimage.png');
     const image = fs.readFileSync(imagePath);
 
-    const response = await requestWithRetry(request, 'post', `${process.env.API_URL}/upload`, {
+    const response = await requestWithRetry(request, 'post', `http://localhost/api/upload`, {
       headers: {
         'Authorization': `Bearer ${process.env.ADMIN_TOKEN}`
       },
@@ -185,12 +185,17 @@ test.describe('Проверка загрузки файлов', () => {
         }
       }
     });
+
     const data = await response.json();
     expect(response.ok()).toBeTruthy();
+    console.log(response.ok());
     expect(data.fileName).toBeDefined();
+    console.log(data.fileName);
 
     const uploadedFileName = path.basename(data.fileName);
     const localFileName = path.basename(imagePath);
+    console.log(uploadedFileName);
+    console.log(localFileName);
 
     expect(uploadedFileName).not.toEqual(localFileName);
   });
