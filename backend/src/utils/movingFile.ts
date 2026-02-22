@@ -4,9 +4,9 @@ import BadRequestError from '../errors/bad-request-error'
 
 function movingFile(imagePath: string, from: string, to: string) {
     // Защита от path traversal
-    if (imagePath.includes('..') || imagePath.includes('./') || imagePath.includes('.\\')) {
-        throw new BadRequestError('Обнаружена попытка path traversal')
-    }
+    // if (imagePath.includes('..') || imagePath.includes('./') || imagePath.includes('.\\')) {
+    //     throw new BadRequestError('Обнаружена попытка path traversal')
+    // }
     
     // Нормализация пути
     const normalizedFrom = normalize(from)

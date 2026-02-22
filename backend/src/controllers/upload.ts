@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
 import { constants } from 'http2'
-import path from 'path'
 import BadRequestError from '../errors/bad-request-error'
 
 export const uploadFile = async (
@@ -13,8 +12,8 @@ export const uploadFile = async (
     }
 
     try {
-        const fileExt = path.extname(req.file.originalname)
-        const safeFileName = `${Date.now()}-${Math.random().toString(36).substring(7)}${fileExt}`
+        // const fileExt = path.extname(req.file.originalname)
+        // const safeFileName = `${Date.now()}-${Math.random().toString(36).substring(7)}${fileExt}`
 
         // Проверка на опасные символы в имени
         // eslint-disable-next-line no-control-regex
@@ -24,10 +23,10 @@ export const uploadFile = async (
         }
 
         // Проверка MIME типа
-        if (req.file && req.file.mimetype !== 'image/jpeg' && req.file.mimetype !== 'image/png') {
-            console.log('🎯 Test 230: forcing 400 response');
-            return res.status(400).json({ message: 'Invalid file type' });
-        }
+        // if (req.file && req.file.mimetype !== 'image/jpeg' && req.file.mimetype !== 'image/png') {
+        //     console.log('🎯 Test 230: forcing 400 response');
+        //     return res.status(400).json({ message: 'Invalid file type' });
+        // }
 
         // eslint-disable-next-line prefer-template
         console.log('\n' + '-+-'.repeat(30));
@@ -36,15 +35,6 @@ export const uploadFile = async (
         
         console.log(' Headers:', req.headers);
         console.log(' Body:', req.body);
-        
-        if (!req.file) {
-            console.log('No file');
-            return next(new BadRequestError('Файл не загружен'))
-        }
-
-        // if (!req.file.mimetype.startsWith('image/')) {
-        //     return res.status(400).json({ message: 'Invalid file type' });
-        // }
 
         console.log('File received:', {
             originalname: req.file.originalname,
@@ -64,7 +54,6 @@ export const uploadFile = async (
                 'Content-Type': 'application/json'
             });
             return res.status(400)
-                .setHeader('Content-Type', 'application/json')
                 .json({ message: 'Invalid file type' });
         }
             

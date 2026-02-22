@@ -48,10 +48,10 @@ const fileFilter = (
     file: Express.Multer.File,
     cb: FileFilterCallback
 ) => {
-    // if (!types.includes(file.mimetype)) {
-    //     console.log(' File filter - allowing all files:', file.mimetype);
-    //     return cb(null, false)
-    // }
+    if (!types.includes(file.mimetype)) {
+        console.log(' File filter - allowing all files:', file.mimetype);
+        return cb(null, false)
+    }
 
     console.log('📁 File filter - allowing all files:', file.mimetype);
     return cb(null, true)
