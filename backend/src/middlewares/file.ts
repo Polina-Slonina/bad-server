@@ -59,10 +59,5 @@ const fileFilter = (
 
 export default multer({ 
     storage, 
-    fileFilter, 
-    limits: {
-        fileSize: 2 * 1024 * 1024, // 
-        files: 1,
-        fields: 5
-    } 
+    fileFilter
 })
