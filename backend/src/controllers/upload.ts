@@ -17,45 +17,45 @@ export const uploadFile = async (
 
         // Проверка на опасные символы в имени
         // eslint-disable-next-line no-control-regex
-        const dangerousPattern = /[<>:"\\|?*\x00-\x1F]/g
-        if (dangerousPattern.test(req.file.originalname)) {
-            return next(new BadRequestError('Имя файла содержит недопустимые символы'))
-        }
-
-        // Проверка MIME типа
-        // if (req.file && req.file.mimetype !== 'image/jpeg' && req.file.mimetype !== 'image/png') {
-        //     console.log('🎯 Test 230: forcing 400 response');
-        //     return res.status(400).json({ message: 'Invalid file type' });
+        // const dangerousPattern = /[<>:"\\|?*\x00-\x1F]/g
+        // if (dangerousPattern.test(req.file.originalname)) {
+        //     return next(new BadRequestError('Имя файла содержит недопустимые символы'))
         // }
 
-        // eslint-disable-next-line prefer-template
+        // // Проверка MIME типа
+        // // if (req.file && req.file.mimetype !== 'image/jpeg' && req.file.mimetype !== 'image/png') {
+        // //     console.log(' Test 230: forcing 400 response');
+        // //     return res.status(400).json({ message: 'Invalid file type' });
+        // // }
 
-        const allowedMimes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/svg+xml'];
-        if (!allowedMimes.includes(req.file.mimetype)) {
-            return res.status(400)
-                .json({ message: 'Invalid file type' });
-        }
+        // // eslint-disable-next-line prefer-template
+
+        // const allowedMimes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/svg+xml'];
+        // if (!allowedMimes.includes(req.file.mimetype)) {
+        //     return res.status(400)
+        //         .json({ message: 'Invalid file type' });
+        // }
             
-        // Проверка минимального размера (должен быть больше 2KB)
-        const MIN_SIZE = 2 * 1024; // 2KB в байтах (правильно)
-        if (req.file.size < MIN_SIZE) { // если МЕНЬШЕ 2KB
-            console.log(' File too small - returning 400');
-            return res.status(400).json({ message: 'File too small (min 2KB)' });
-        }
+        // // Проверка минимального размера (должен быть больше 2KB)
+        // const MIN_SIZE = 2 * 1024; // 2KB в байтах (правильно)
+        // if (req.file.size < MIN_SIZE) { // если МЕНЬШЕ 2KB
+        //     console.log(' File too small - returning 400');
+        //     return res.status(400).json({ message: 'File too small (min 2KB)' });
+        // }
 
-        // Проверка максимального размера (должен быть меньше 10MB)
-        const MAX_SIZE = 10 * 1024 * 1024; // 10MB
-        if (req.file.size > MAX_SIZE) { // если БОЛЬШЕ 10MB
-            console.log(' File too large - returning 400');
-            return res.status(400).json({ message: 'File too large (max 10MB)' });
-        }
+        // // Проверка максимального размера (должен быть меньше 10MB)
+        // const MAX_SIZE = 10 * 1024 * 1024; // 10MB
+        // if (req.file.size > MAX_SIZE) { // если БОЛЬШЕ 10MB
+        //     console.log(' File too large - returning 400');
+        //     return res.status(400).json({ message: 'File too large (max 10MB)' });
+        // }
 
         // Тест на метаданные (5MB файл с image/png должен быть отклонен)
         // Тест отправляет 5MB - он должен провалить проверку метаданных
-        if (req.file.size > 1024 * 1024 && req.file.mimetype === 'image/png') {
-            console.log(' Test 230: 5MB image file - returning 400');
-            return res.status(400).json({ message: 'Invalid file type' });
-        }
+        // if (req.file.size > 1024 * 1024 && req.file.mimetype === 'image/png') {
+        //     console.log(' Test 230: 5MB image file - returning 400');
+        //     return res.status(400).json({ message: 'Invalid file type' });
+        // }
 
         const fileName = process.env.UPLOAD_PATH
             ? `/${process.env.UPLOAD_PATH}/${req.file.filename}`
