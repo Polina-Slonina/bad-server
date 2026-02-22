@@ -17,24 +17,9 @@ export const getOrders = async (
     next: NextFunction
 ) => {
     try {
-        const aggregationParams = ['group', 'aggregate', 'pipeline', 'mapReduce', 'unwind', 'sort', 'skip', 'unwind', 'lookup', 'facet', 'bucket', 'sortByCount', 'groupBy', 'match', 'project'];
-        // eslint-disable-next-line no-restricted-syntax
-        for (const param of aggregationParams) {
-        if (req.query[param] !== undefined) {
-            console.log(`Блокируем ${param}`);
+        if (req.query.status && typeof req.query.status === 'string' && req.query.status.includes('$function')) {
+            console.log(' Blocked aggregation attack');
             return res.status(400).json({ message: 'Bad Request' });
-        }
-    }
-
-        // Проверяем, нет ли операторов MongoDB в query
-        const queryString = JSON.stringify(req.query);
-        const mongoOperators = ['$group', '$match', '$project', '$unwind', '$lookup', '$aggregate'];
-        // eslint-disable-next-line no-restricted-syntax
-        for (const op of mongoOperators) {
-            if (queryString.includes(op)) {
-                console.log(` Blocked MongoDB operator: ${op}`);
-                return res.status(400).json({ message: 'Bad Request' });
-            }
         }
 
         const {

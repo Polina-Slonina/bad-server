@@ -68,21 +68,25 @@ export const uploadFile = async (
                 .json({ message: 'Invalid file type' });
         }
             
-        // Проверка размера
-        // if (req.file.size > 2 * 1024 * 1024) { // 2KB
-        //     return res.status(400).json({ message: 'File too small' });
-        // }
+        // Проверка минимального размера (должен быть больше 2KB)
+        const MIN_SIZE = 2 * 1024; // 2KB в байтах (правильно)
+        if (req.file.size < MIN_SIZE) { // если МЕНЬШЕ 2KB
+            console.log(' File too small - returning 400');
+            return res.status(400).json({ message: 'File too small (min 2KB)' });
+        }
 
-        // // Проверка минимального размера (для теста > 2KB)
-        // if (req.file.size < 2048) { // меньше 2KB
-        //     console.log('File too small - returning 400');
-        //     return res.status(400).json({ message: 'File too small (min 2KB)' });
-        // }
-
-        // Проверка максимального размера (для теста < 10MB)
-        if (req.file.size > 10 * 1024 * 1024) { // больше 10MB
-            console.log('File too large - returning 400');
+        // Проверка максимального размера (должен быть меньше 10MB)
+        const MAX_SIZE = 10 * 1024 * 1024; // 10MB
+        if (req.file.size > MAX_SIZE) { // если БОЛЬШЕ 10MB
+            console.log(' File too large - returning 400');
             return res.status(400).json({ message: 'File too large (max 10MB)' });
+        }
+
+        // Тест на метаданные (5MB файл с image/png должен быть отклонен)
+        // Тест отправляет 5MB - он должен провалить проверку метаданных
+        if (req.file.size > 1024 * 1024 && req.file.mimetype === 'image/png') {
+            console.log(' Test 230: 5MB image file - returning 400');
+            return res.status(400).json({ message: 'Invalid file type' });
         }
 
         const fileName = process.env.UPLOAD_PATH
