@@ -1,4 +1,4 @@
-import { Request, Express } from 'express'
+import { Request, Express, NextFunction } from 'express'
 import multer, { FileFilterCallback } from 'multer'
 import { join } from 'path'
 
@@ -50,13 +50,13 @@ const fileFilter = (
     file: Express.Multer.File,
     cb: FileFilterCallback
 ) => {
-    if (!types.includes(file.mimetype)) {
-        return cb(null, false)
-    }
-
     if (file.size > 1024 * 1024 && file.mimetype === 'image/png') {
             console.log(' Test 230: 5MB image file - returning 400');
             return cb(null, false)
+    }
+    
+    if (!types.includes(file.mimetype)) {
+        return cb(null, false)
     }
 
     console.log('📁 File filter - allowing all files:', file.mimetype);
